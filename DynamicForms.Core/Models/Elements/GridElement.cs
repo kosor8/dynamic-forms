@@ -37,21 +37,60 @@ namespace DynamicForms.Core.Models.Elements
                 panel.Controls.Add(cbSubType);
                 yPos += 35;
 
-                var lblRows = new Label { Text = "Satırlar (virgülle ayırın):", AutoSize = true, Location = new Point(0, yPos) };
+                var lblRows = new Label { Text = "Satırlar:", AutoSize = true, Location = new Point(0, yPos) };
                 panel.Controls.Add(lblRows);
-                yPos += 20;
-                var txtRows = new TextBox { Text = string.Join(", ", Rows), Width = 400, Location = new Point(0, yPos) };
-                txtRows.Leave += (_, _) => { Rows = new List<string>(txtRows.Text.Split(new[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries)); for(int i=0;i<Rows.Count;i++) Rows[i]=Rows[i].Trim(); onUpdate?.Invoke(); };
-                panel.Controls.Add(txtRows);
-                yPos += 30;
 
-                var lblCols = new Label { Text = "Sütunlar (virgülle ayırın):", AutoSize = true, Location = new Point(0, yPos) };
+                var lblCols = new Label { Text = "Sütunlar:", AutoSize = true, Location = new Point(250, yPos) };
                 panel.Controls.Add(lblCols);
-                yPos += 20;
-                var txtCols = new TextBox { Text = string.Join(", ", Columns), Width = 400, Location = new Point(0, yPos) };
-                txtCols.Leave += (_, _) => { Columns = new List<string>(txtCols.Text.Split(new[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries)); for(int i=0;i<Columns.Count;i++) Columns[i]=Columns[i].Trim(); onUpdate?.Invoke(); };
-                panel.Controls.Add(txtCols);
-                yPos += 40;
+                yPos += 25;
+
+                int maxCount = System.Math.Max(Rows.Count, Columns.Count);
+                for (int i = 0; i < maxCount; i++)
+                {
+                    if (i < Rows.Count)
+                    {
+                        int rIdx = i;
+                        var txtRow = new TextBox { Text = Rows[i], Width = 180, Location = new Point(0, yPos) };
+                        txtRow.TextChanged += (_, _) => { Rows[rIdx] = txtRow.Text; };
+                        panel.Controls.Add(txtRow);
+
+                        if (Rows.Count > 1)
+                        {
+                            var btnRemRow = new Button { Text = "✖", Size = new Size(25, 25), Location = new Point(185, yPos - 1), FlatStyle = FlatStyle.Flat, ForeColor = Color.Gray, Cursor = Cursors.Hand, TextAlign = ContentAlignment.MiddleCenter, Padding = new Padding(0) };
+                            btnRemRow.FlatAppearance.BorderSize = 0;
+                            btnRemRow.Click += (_, _) => { Rows.RemoveAt(rIdx); onUpdate?.Invoke(); };
+                            panel.Controls.Add(btnRemRow);
+                        }
+                    }
+
+                    if (i < Columns.Count)
+                    {
+                        int cIdx = i;
+                        var txtCol = new TextBox { Text = Columns[i], Width = 180, Location = new Point(250, yPos) };
+                        txtCol.TextChanged += (_, _) => { Columns[cIdx] = txtCol.Text; };
+                        panel.Controls.Add(txtCol);
+
+                        if (Columns.Count > 1)
+                        {
+                            var btnRemCol = new Button { Text = "✖", Size = new Size(25, 25), Location = new Point(435, yPos - 1), FlatStyle = FlatStyle.Flat, ForeColor = Color.Gray, Cursor = Cursors.Hand, TextAlign = ContentAlignment.MiddleCenter, Padding = new Padding(0) };
+                            btnRemCol.FlatAppearance.BorderSize = 0;
+                            btnRemCol.Click += (_, _) => { Columns.RemoveAt(cIdx); onUpdate?.Invoke(); };
+                            panel.Controls.Add(btnRemCol);
+                        }
+                    }
+                    yPos += 30;
+                }
+
+                var btnAddRow = new Button { Text = "Satır Ekle", AutoSize = true, Location = new Point(0, yPos), FlatStyle = FlatStyle.Flat, ForeColor = Color.DodgerBlue, Cursor = Cursors.Hand };
+                btnAddRow.FlatAppearance.BorderSize = 0;
+                btnAddRow.Click += (_, _) => { Rows.Add($"Satır {Rows.Count + 1}"); onUpdate?.Invoke(); };
+                panel.Controls.Add(btnAddRow);
+
+                var btnAddCol = new Button { Text = "Sütun Ekle", AutoSize = true, Location = new Point(250, yPos), FlatStyle = FlatStyle.Flat, ForeColor = Color.DodgerBlue, Cursor = Cursors.Hand };
+                btnAddCol.FlatAppearance.BorderSize = 0;
+                btnAddCol.Click += (_, _) => { Columns.Add($"Sütun {Columns.Count + 1}"); onUpdate?.Invoke(); };
+                panel.Controls.Add(btnAddCol);
+                yPos += 35;
             }
 
             // Header row

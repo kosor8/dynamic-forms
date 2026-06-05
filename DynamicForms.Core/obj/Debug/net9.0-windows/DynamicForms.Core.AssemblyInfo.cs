@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DynamicForms.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5f7379d5cfcde1f1343b4add88829a7bb87e13a1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f2ddc04f31f941ca6b70cbe75c05f538df70800f")]
 [assembly: System.Reflection.AssemblyProductAttribute("DynamicForms.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DynamicForms.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

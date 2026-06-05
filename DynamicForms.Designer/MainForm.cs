@@ -586,6 +586,7 @@ namespace DynamicForms.Designer
                             break;
                         }
                     }
+                    if (targetIndex == 0 && designerArea.Controls.Count > 0) targetIndex = 1;
 
                     if (_dropIndex != targetIndex)
                     {
@@ -658,6 +659,8 @@ namespace DynamicForms.Designer
                     break;
                 }
             }
+            if (targetIndex == 0 && designerArea.Controls.Count > 0) targetIndex = 1;
+            int insertIndex = Math.Max(0, targetIndex - 1);
 
             if (dataStr.StartsWith("ToolboxElement:"))
             {
@@ -674,7 +677,7 @@ namespace DynamicForms.Designer
 
                     var currentList = _formManager.CurrentFormElements.OrderBy(x => x.OrderIndex).ToList();
                     currentList.Remove(el);
-                    currentList.Insert(Math.Min(targetIndex, currentList.Count), el);
+                    currentList.Insert(Math.Min(insertIndex, currentList.Count), el);
                     
                     for (int i = 0; i < currentList.Count; i++)
                     {
@@ -697,8 +700,8 @@ namespace DynamicForms.Designer
                     if (oldIdx != -1)
                     {
                         currentList.RemoveAt(oldIdx);
-                        if (targetIndex > oldIdx) targetIndex--; // Kendisini çıkardığımız için hedef index kayabilir
-                        currentList.Insert(Math.Min(targetIndex, currentList.Count), draggingEl);
+                        if (insertIndex > oldIdx) insertIndex--; // Kendisini çıkardığımız için hedef index kayabilir
+                        currentList.Insert(Math.Min(insertIndex, currentList.Count), draggingEl);
 
                         for (int i = 0; i < currentList.Count; i++)
                         {
