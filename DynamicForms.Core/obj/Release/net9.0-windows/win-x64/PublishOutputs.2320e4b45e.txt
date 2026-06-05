@@ -1,0 +1,8 @@
+C:\Users\Eren\Desktop\dynamic-forms-main\publish_output\DynamicForms.Core.dll
+C:\Users\Eren\Desktop\dynamic-forms-main\publish_output\DynamicForms.Core.deps.json
+C:\Users\Eren\Desktop\dynamic-forms-main\publish_output\DynamicForms.Core.pdb
+C:\Users\Eren\Desktop\dynamic-forms-main\publish_output\Microsoft.Data.Sqlite.dll
+C:\Users\Eren\Desktop\dynamic-forms-main\publish_output\SQLitePCLRaw.batteries_v2.dll
+C:\Users\Eren\Desktop\dynamic-forms-main\publish_output\SQLitePCLRaw.core.dll
+C:\Users\Eren\Desktop\dynamic-forms-main\publish_output\SQLitePCLRaw.provider.e_sqlite3.dll
+C:\Users\Eren\Desktop\dynamic-forms-main\publish_output\e_sqlite3.dll

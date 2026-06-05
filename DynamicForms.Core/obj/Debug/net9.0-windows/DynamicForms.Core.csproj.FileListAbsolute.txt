@@ -1,0 +1,12 @@
+C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\bin\Debug\net9.0-windows\DynamicForms.Core.deps.json
+C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\bin\Debug\net9.0-windows\DynamicForms.Core.dll
+C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\bin\Debug\net9.0-windows\DynamicForms.Core.pdb
+C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.csproj.AssemblyReference.cache
+C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.AssemblyInfoInputs.cache
+C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.AssemblyInfo.cs
+C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.csproj.CoreCompileInputs.cache
+C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.dll
+C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\obj\Debug\net9.0-windows\refint\DynamicForms.Core.dll
+C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.pdb
+C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\obj\Debug\net9.0-windows\ref\DynamicForms.Core.dll
