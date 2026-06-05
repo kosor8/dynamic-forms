@@ -18,10 +18,41 @@ namespace DynamicForms.Core.Models.Elements
             Title = "Seçme Tablosu";
         }
 
-        public override Control RenderControl(bool isDesignerMode)
+        public override Control RenderControl(bool isDesignerMode, bool isSelected = false, System.Action? onUpdate = null, System.Action? onDelete = null)
         {
             var panel = new Panel();
-            int yPos = AddTitleAndDescription(panel);
+            int yPos = AddTitleAndDescription(panel, isSelected, onUpdate);
+
+            if (isSelected)
+            {
+                var cbSubType = new ComboBox
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Width = 250,
+                    Location = new Point(0, yPos)
+                };
+                cbSubType.Items.AddRange(System.Enum.GetNames(typeof(GridType)));
+                cbSubType.SelectedItem = SubType.ToString();
+                cbSubType.SelectedIndexChanged += (_, _) => { SubType = System.Enum.Parse<GridType>(cbSubType.SelectedItem?.ToString() ?? "RadioGrid"); onUpdate?.Invoke(); };
+                panel.Controls.Add(cbSubType);
+                yPos += 35;
+
+                var lblRows = new Label { Text = "Satırlar (virgülle ayırın):", AutoSize = true, Location = new Point(0, yPos) };
+                panel.Controls.Add(lblRows);
+                yPos += 20;
+                var txtRows = new TextBox { Text = string.Join(", ", Rows), Width = 400, Location = new Point(0, yPos) };
+                txtRows.Leave += (_, _) => { Rows = new List<string>(txtRows.Text.Split(new[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries)); for(int i=0;i<Rows.Count;i++) Rows[i]=Rows[i].Trim(); onUpdate?.Invoke(); };
+                panel.Controls.Add(txtRows);
+                yPos += 30;
+
+                var lblCols = new Label { Text = "Sütunlar (virgülle ayırın):", AutoSize = true, Location = new Point(0, yPos) };
+                panel.Controls.Add(lblCols);
+                yPos += 20;
+                var txtCols = new TextBox { Text = string.Join(", ", Columns), Width = 400, Location = new Point(0, yPos) };
+                txtCols.Leave += (_, _) => { Columns = new List<string>(txtCols.Text.Split(new[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries)); for(int i=0;i<Columns.Count;i++) Columns[i]=Columns[i].Trim(); onUpdate?.Invoke(); };
+                panel.Controls.Add(txtCols);
+                yPos += 40;
+            }
 
             // Header row
             int xStart = 120;
@@ -31,7 +62,7 @@ namespace DynamicForms.Core.Models.Elements
                 {
                     Text = Columns[c],
                     AutoSize = true,
-                    Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
+                    Font = new Font("Segoe UI", 9f),
                     Location = new Point(xStart + c * 80, yPos)
                 };
                 panel.Controls.Add(lbl);
@@ -64,6 +95,8 @@ namespace DynamicForms.Core.Models.Elements
                 }
                 yPos += 28;
             }
+
+            yPos = AddFooterControls(panel, yPos, isSelected, onUpdate, onDelete);
 
             panel.Size = new Size(500, yPos);
             return WrapInCard(panel, isDesignerMode);

@@ -22,16 +22,11 @@ namespace DynamicForms.Designer
         // UI
         private TabControl tabControl = null!;
         private FlowLayoutPanel designerArea = null!;
-        private Panel propertiesPanel = null!;
         private ListBox listForms = null!;
         private ComboBox comboResponsesForm = null!;
         private DataGridView gridResponses = null!;
-        private TextBox txtFormTitle = null!;
-        private TextBox txtPropTitle = null!;
-        private TextBox txtPropDesc = null!;
-        private CheckBox chkPropRequired = null!;
-        private Panel panelDynamicProperties = null!;
-        private bool _updatingProps;
+
+        private int _dropIndex = -1;
 
         public MainForm()
         {
@@ -46,6 +41,7 @@ namespace DynamicForms.Designer
 
             BuildUI();
             LoadFormsList();
+            NewForm();
         }
 
         // ─────────────────────────────────── UI BUILD ───────────────────────────────────
@@ -61,6 +57,8 @@ namespace DynamicForms.Designer
                 AutoSize = true,
                 Location = new Point(15, 12)
             });
+
+
 
             var btnSave = new ModernButton
             {
@@ -220,69 +218,8 @@ namespace DynamicForms.Designer
             }
             tab.Controls.Add(leftPanel);
 
-            // ── RIGHT PANEL (Properties) ──
-            propertiesPanel = new Panel
-            {
-                Dock = DockStyle.Right,
-                Width = 280,
-                BackColor = Color.White,
-                Padding = new Padding(15)
-            };
-
-            propertiesPanel.Controls.Add(new Label
-            {
-                Text = "Özellikler",
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                AutoSize = true,
-                Location = new Point(15, 10)
-            });
-
-            propertiesPanel.Controls.Add(new Label { Text = "Form Başlığı:", AutoSize = true, Location = new Point(15, 40) });
-            txtFormTitle = new TextBox { Width = 245, Location = new Point(15, 60), Text = _formManager.FormTitle };
-            txtFormTitle.TextChanged += (_, _) => _formManager.FormTitle = txtFormTitle.Text;
-            propertiesPanel.Controls.Add(txtFormTitle);
-
-            propertiesPanel.Controls.Add(new Panel { Width = 245, Height = 1, BackColor = Color.LightGray, Location = new Point(15, 95) });
-            propertiesPanel.Controls.Add(new Label
-            {
-                Text = "Seçili Soru Ayarları:",
-                Font = new Font("Segoe UI", 9, FontStyle.Bold),
-                AutoSize = true,
-                Location = new Point(15, 110)
-            });
-
-            propertiesPanel.Controls.Add(new Label { Text = "Soru Başlığı:", AutoSize = true, Location = new Point(15, 135) });
-            txtPropTitle = new TextBox { Width = 245, Location = new Point(15, 155) };
-            txtPropTitle.TextChanged += PropChanged;
-            propertiesPanel.Controls.Add(txtPropTitle);
-
-            propertiesPanel.Controls.Add(new Label { Text = "Açıklama:", AutoSize = true, Location = new Point(15, 185) });
-            txtPropDesc = new TextBox { Width = 245, Location = new Point(15, 205) };
-            txtPropDesc.TextChanged += PropChanged;
-            propertiesPanel.Controls.Add(txtPropDesc);
-
-            chkPropRequired = new CheckBox { Text = "Zorunlu Alan", AutoSize = true, Location = new Point(15, 235) };
-            chkPropRequired.CheckedChanged += PropChanged;
-            propertiesPanel.Controls.Add(chkPropRequired);
-
-            var btnDelElem = new ModernButton
-            {
-                Text = "Soruyu Sil",
-                BackColor = Color.FromArgb(239, 83, 80),
-                Size = new Size(245, 30),
-                Location = new Point(15, 265)
-            };
-            btnDelElem.Click += (_, _) => DeleteSelectedElement();
-            propertiesPanel.Controls.Add(btnDelElem);
-
-            panelDynamicProperties = new Panel
-            {
-                Location = new Point(15, 310),
-                Size = new Size(245, 380),
-                AutoScroll = true
-            };
-            propertiesPanel.Controls.Add(panelDynamicProperties);
-            tab.Controls.Add(propertiesPanel);
+            // ── RIGHT PANEL REMOVED ──
+            tab.Controls.Add(leftPanel);
 
             // ── DESIGNER AREA (center) ──
             designerArea = new FlowLayoutPanel
@@ -299,6 +236,8 @@ namespace DynamicForms.Designer
             designerArea.DragEnter += DesignerArea_DragEnter;
             designerArea.DragOver += DesignerArea_DragOver;
             designerArea.DragDrop += DesignerArea_DragDrop;
+            designerArea.DragLeave += DesignerArea_DragLeave;
+            designerArea.Paint += DesignerArea_Paint;
             tab.Controls.Add(designerArea);
             designerArea.BringToFront();
         }
@@ -359,16 +298,16 @@ namespace DynamicForms.Designer
         {
             _currentFormId = Guid.NewGuid().ToString();
             _formManager.ClearForm();
-            txtFormTitle.Text = "Yeni Form";
+            _formManager.FormTitle = "Yeni Form";
+            _formManager.FormDescription = "";
             _selectedElement = null;
-            UpdatePropertiesPanel();
             RefreshDesigner();
         }
 
         private void LoadFormsList()
         {
             var forms = _dbEngine.GetSavedForms();
-            listForms.DataSource = new BindingSource(forms.ToList(), null);
+            listForms.DataSource = new BindingSource(forms.ToList(), "");
             listForms.DisplayMember = "Value";
             listForms.ValueMember = "Key";
         }
@@ -376,7 +315,7 @@ namespace DynamicForms.Designer
         private void LoadResponsesDropdown()
         {
             var forms = _dbEngine.GetSavedForms();
-            comboResponsesForm.DataSource = new BindingSource(forms.ToList(), null);
+            comboResponsesForm.DataSource = new BindingSource(forms.ToList(), "");
             comboResponsesForm.DisplayMember = "Value";
             comboResponsesForm.ValueMember = "Key";
         }
@@ -388,19 +327,17 @@ namespace DynamicForms.Designer
                 _currentFormId = formId;
                 var formName = ((KeyValuePair<string, string>)listForms.SelectedItem!).Value;
                 _formManager.FormTitle = formName;
-                txtFormTitle.Text = formName;
+                _formManager.FormDescription = ""; 
                 _formManager.CurrentFormElements.Clear();
                 foreach (var el in _dbEngine.LoadFormStructure(formId))
                     _formManager.AddElement(el);
                 _selectedElement = null;
-                UpdatePropertiesPanel();
                 RefreshDesigner();
             }
         }
 
         private void SaveForm()
         {
-            _formManager.FormTitle = txtFormTitle.Text;
             _dbEngine.SaveFormStructure(_currentFormId, _formManager.FormTitle, _formManager.CurrentFormElements);
             MessageBox.Show("Form başarıyla kaydedildi!", "Başarılı", MessageBoxButtons.OK, MessageBoxIcon.Information);
             LoadFormsList();
@@ -408,12 +345,16 @@ namespace DynamicForms.Designer
 
         private void PublishForm()
         {
+            if (string.IsNullOrWhiteSpace(_formManager.FormTitle))
+            {
+                MessageBox.Show("Lütfen bir form başlığı girin.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             if (_formManager.CurrentFormElements.Count == 0)
             {
                 MessageBox.Show("Yayınlamadan önce forma en az bir soru ekleyin.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            _formManager.FormTitle = txtFormTitle.Text;
             _dbEngine.SaveFormStructure(_currentFormId, _formManager.FormTitle, _formManager.CurrentFormElements);
             _dbEngine.PublishForm(_currentFormId);
             MessageBox.Show("Form kaydedildi ve yayınlandı!\nArtık Filler uygulamasından doldurulabilir.", "Başarılı", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -463,14 +404,14 @@ namespace DynamicForms.Designer
             var el = CreateElementByType(type);
             _formManager.AddElement(el);
             _selectedElement = el;
-            UpdatePropertiesPanel();
+            RefreshDesigner();
             RefreshDesigner();
         }
 
         private void SelectElement(FormElement el)
         {
+            if (_selectedElement == el) return;
             _selectedElement = el;
-            UpdatePropertiesPanel();
             RefreshDesigner();
         }
 
@@ -480,7 +421,6 @@ namespace DynamicForms.Designer
             {
                 _formManager.RemoveElement(_selectedElement);
                 _selectedElement = null;
-                UpdatePropertiesPanel();
                 RefreshDesigner();
             }
         }
@@ -492,13 +432,57 @@ namespace DynamicForms.Designer
             designerArea.SuspendLayout();
             designerArea.Controls.Clear();
 
+            // ──────────────────── HEADER CARD ────────────────────
+            var headerCard = new CardPanel(false) { Height = 130 };
+            int hw = designerArea.ClientSize.Width - 55;
+            headerCard.Width = hw < 300 ? 300 : hw;
+
+            var topBorder = new Panel { Dock = DockStyle.Top, Height = 10, BackColor = Color.FromArgb(103, 58, 183) }; // Google Forms style purple bar
+            headerCard.Controls.Add(topBorder);
+
+            var txtTitle = new TextBox 
+            { 
+                Text = _formManager.FormTitle, 
+                Font = new Font("Segoe UI", 24f, FontStyle.Bold), 
+                ForeColor = Color.FromArgb(33, 33, 33), 
+                Width = headerCard.Width - 40, 
+                BorderStyle = BorderStyle.None, 
+                PlaceholderText = "Form Başlığı", 
+                Location = new Point(20, 30) 
+            };
+            txtTitle.TextChanged += (_, _) => _formManager.FormTitle = txtTitle.Text;
+            
+            var txtDesc = new TextBox 
+            { 
+                Text = _formManager.FormDescription,
+                Font = new Font("Segoe UI", 11f), 
+                ForeColor = Color.FromArgb(117, 117, 117), 
+                Width = headerCard.Width - 40, 
+                BorderStyle = BorderStyle.None, 
+                PlaceholderText = "Form açıklaması", 
+                Location = new Point(20, 85) 
+            };
+            txtDesc.TextChanged += (_, _) => _formManager.FormDescription = txtDesc.Text;
+
+            headerCard.Controls.Add(txtTitle);
+            headerCard.Controls.Add(txtDesc);
+
+            designerArea.Controls.Add(headerCard);
+            // ────────────────────────────────────────────────────────
+
             foreach (var el in _formManager.CurrentFormElements.OrderBy(e => e.OrderIndex))
             {
-                Control card = el.RenderControl(isDesignerMode: true);
+                bool isSelected = _selectedElement != null && el.Id == _selectedElement.Id;
+                Control card = el.RenderControl(
+                    isDesignerMode: true,
+                    isSelected: isSelected,
+                    onUpdate: () => RefreshDesigner(),
+                    onDelete: () => { _formManager.RemoveElement(el); _selectedElement = null; RefreshDesigner(); }
+                );
 
                 // Highlight selected
                 if (_selectedElement != null && el.Id == _selectedElement.Id)
-                    card.BackColor = Color.FromArgb(255, 253, 231);
+                    card.BackColor = Color.FromArgb(255, 253, 210); // Lighter yellow
 
                 // Set width
                 int w = designerArea.ClientSize.Width - 55;
@@ -539,148 +523,6 @@ namespace DynamicForms.Designer
                 if (child.Name != "DragHandle")
                     AttachClick(child, el);
             }
-        }
-
-        // ──────────────────── PROPERTIES PANEL ────────────────────
-
-        private void UpdatePropertiesPanel()
-        {
-            _updatingProps = true;
-            panelDynamicProperties.Controls.Clear();
-
-            if (_selectedElement == null)
-            {
-                txtPropTitle.Text = "";
-                txtPropDesc.Text = "";
-                chkPropRequired.Checked = false;
-                _updatingProps = false;
-                return;
-            }
-
-            txtPropTitle.Text = _selectedElement.Title;
-            txtPropDesc.Text = _selectedElement.Description;
-            chkPropRequired.Checked = _selectedElement.IsRequired;
-            BuildDynamicProps(_selectedElement);
-            _updatingProps = false;
-        }
-
-        private void PropChanged(object? sender, EventArgs e)
-        {
-            if (_updatingProps || _selectedElement == null) return;
-            _selectedElement.Title = txtPropTitle.Text;
-            _selectedElement.Description = txtPropDesc.Text;
-            _selectedElement.IsRequired = chkPropRequired.Checked;
-            RefreshDesigner();
-        }
-
-        private void BuildDynamicProps(FormElement el)
-        {
-            int y = 0;
-
-            // Sub-type combo
-            ComboBox? cbSub = null;
-            if (el is OpenEndedElement oe)
-            {
-                cbSub = MakeSubTypeCombo<OpenEndedType>(oe.SubType.ToString(), y, v => { oe.SubType = Enum.Parse<OpenEndedType>(v); RefreshDesigner(); });
-            }
-            else if (el is ChoiceElement ce)
-            {
-                cbSub = MakeSubTypeCombo<ChoiceType>(ce.SubType.ToString(), y, v => { ce.SubType = Enum.Parse<ChoiceType>(v); RefreshDesigner(); });
-            }
-            else if (el is GridElement ge)
-            {
-                cbSub = MakeSubTypeCombo<GridType>(ge.SubType.ToString(), y, v => { ge.SubType = Enum.Parse<GridType>(v); RefreshDesigner(); });
-            }
-            else if (el is TimeElement te)
-            {
-                cbSub = MakeSubTypeCombo<TimeType>(te.SubType.ToString(), y, v => { te.SubType = Enum.Parse<TimeType>(v); RefreshDesigner(); });
-            }
-
-            if (cbSub != null)
-            {
-                panelDynamicProperties.Controls.Add(new Label { Text = "Alt Tür:", AutoSize = true, Location = new Point(0, y) });
-                y += 20;
-                cbSub.Location = new Point(0, y);
-                panelDynamicProperties.Controls.Add(cbSub);
-                y += 35;
-            }
-
-            // Choice options editor
-            if (el is ChoiceElement choiceEl)
-            {
-                panelDynamicProperties.Controls.Add(new Label { Text = "Seçenekler:", AutoSize = true, Location = new Point(0, y) });
-                y += 20;
-                var txtOpt = new TextBox { Width = 170, Location = new Point(0, y) };
-                var btnAdd = new Button { Text = "Ekle", Width = 55, Height = 23, Location = new Point(175, y) };
-                y += 28;
-                var lb = new ListBox { Width = 230, Height = 90, Location = new Point(0, y) };
-                lb.Items.AddRange(choiceEl.Options.ToArray());
-                y += 95;
-                var btnRem = new Button { Text = "Seçiliyi Sil", Width = 230, Height = 25, Location = new Point(0, y) };
-
-                btnAdd.Click += (_, _) =>
-                {
-                    if (!string.IsNullOrWhiteSpace(txtOpt.Text))
-                    {
-                        choiceEl.Options.Add(txtOpt.Text);
-                        lb.Items.Add(txtOpt.Text);
-                        txtOpt.Clear();
-                        RefreshDesigner();
-                    }
-                };
-                btnRem.Click += (_, _) =>
-                {
-                    if (lb.SelectedIndex >= 0)
-                    {
-                        choiceEl.Options.RemoveAt(lb.SelectedIndex);
-                        lb.Items.RemoveAt(lb.SelectedIndex);
-                        RefreshDesigner();
-                    }
-                };
-
-                panelDynamicProperties.Controls.AddRange(new Control[] { txtOpt, btnAdd, lb, btnRem });
-            }
-
-            // Scale min/max
-            if (el is ScaleElement scaleEl)
-            {
-                panelDynamicProperties.Controls.Add(new Label { Text = "Min - Max:", AutoSize = true, Location = new Point(0, y) });
-                y += 20;
-                var nMin = new NumericUpDown { Minimum = 0, Maximum = 1, Value = scaleEl.MinValue, Width = 50, Location = new Point(0, y) };
-                var nMax = new NumericUpDown { Minimum = 2, Maximum = 10, Value = scaleEl.MaxValue, Width = 50, Location = new Point(80, y) };
-                nMin.ValueChanged += (_, _) => { scaleEl.MinValue = (int)nMin.Value; RefreshDesigner(); };
-                nMax.ValueChanged += (_, _) => { scaleEl.MaxValue = (int)nMax.Value; RefreshDesigner(); };
-                panelDynamicProperties.Controls.Add(nMin);
-                panelDynamicProperties.Controls.Add(nMax);
-            }
-
-            // Grid rows/cols
-            if (el is GridElement gridEl)
-            {
-                panelDynamicProperties.Controls.Add(new Label { Text = "Satırlar (virgülle):", AutoSize = true, Location = new Point(0, y) });
-                y += 20;
-                var txtRows = new TextBox { Width = 230, Location = new Point(0, y), Text = string.Join(",", gridEl.Rows) };
-                txtRows.Leave += (_, _) => { gridEl.Rows = txtRows.Text.Split(',').Select(s => s.Trim()).Where(s => s.Length > 0).ToList(); RefreshDesigner(); };
-                panelDynamicProperties.Controls.Add(txtRows);
-                y += 28;
-                panelDynamicProperties.Controls.Add(new Label { Text = "Sütunlar (virgülle):", AutoSize = true, Location = new Point(0, y) });
-                y += 20;
-                var txtCols = new TextBox { Width = 230, Location = new Point(0, y), Text = string.Join(",", gridEl.Columns) };
-                txtCols.Leave += (_, _) => { gridEl.Columns = txtCols.Text.Split(',').Select(s => s.Trim()).Where(s => s.Length > 0).ToList(); RefreshDesigner(); };
-                panelDynamicProperties.Controls.Add(txtCols);
-            }
-        }
-
-        private ComboBox MakeSubTypeCombo<T>(string currentValue, int y, Action<string> onChange) where T : struct, Enum
-        {
-            var cb = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 230 };
-            cb.Items.AddRange(Enum.GetNames<T>());
-            cb.SelectedItem = currentValue;
-            cb.SelectedIndexChanged += (_, _) =>
-            {
-                if (cb.SelectedItem is string val) onChange(val);
-            };
-            return cb;
         }
 
         // ──────────────────── RESPONSES TAB ────────────────────
@@ -732,14 +574,73 @@ namespace DynamicForms.Designer
                 if (dataStr != null && (dataStr.StartsWith("ToolboxElement:") || _formManager.CurrentFormElements.Any(el => el.Id == dataStr)))
                 {
                     e.Effect = dataStr.StartsWith("ToolboxElement:") ? DragDropEffects.Copy : DragDropEffects.Move;
+                    
+                    Point clientPt = designerArea.PointToClient(new Point(e.X, e.Y));
+                    int targetIndex = designerArea.Controls.Count;
+                    for (int i = 0; i < designerArea.Controls.Count; i++)
+                    {
+                        Control ctrl = designerArea.Controls[i];
+                        if (clientPt.Y < ctrl.Top + ctrl.Height / 2)
+                        {
+                            targetIndex = i;
+                            break;
+                        }
+                    }
+
+                    if (_dropIndex != targetIndex)
+                    {
+                        _dropIndex = targetIndex;
+                        designerArea.Invalidate();
+                    }
+                    
                     return;
                 }
             }
             e.Effect = DragDropEffects.None;
         }
 
+        private void DesignerArea_DragLeave(object? sender, EventArgs e)
+        {
+            Point pt = designerArea.PointToClient(Cursor.Position);
+            if (!designerArea.ClientRectangle.Contains(pt))
+            {
+                if (_dropIndex != -1)
+                {
+                    _dropIndex = -1;
+                    designerArea.Invalidate();
+                }
+            }
+        }
+
+        private void DesignerArea_Paint(object? sender, PaintEventArgs e)
+        {
+            if (_dropIndex >= 0 && _dropIndex <= designerArea.Controls.Count)
+            {
+                int yPos = 20;
+                if (designerArea.Controls.Count > 0)
+                {
+                    if (_dropIndex < designerArea.Controls.Count)
+                    {
+                        yPos = designerArea.Controls[_dropIndex].Top - 6;
+                    }
+                    else
+                    {
+                        yPos = designerArea.Controls[designerArea.Controls.Count - 1].Bottom + 6;
+                    }
+                }
+
+                using (var pen = new Pen(Color.DodgerBlue, 4))
+                {
+                    e.Graphics.DrawLine(pen, 20, yPos, designerArea.ClientSize.Width - 20, yPos);
+                }
+            }
+        }
+
         private void DesignerArea_DragDrop(object? sender, DragEventArgs e)
         {
+            _dropIndex = -1;
+            designerArea.Invalidate();
+
             if (e.Data == null || !e.Data.GetDataPresent(DataFormats.Text)) return;
             string? dataStr = e.Data.GetData(DataFormats.Text) as string;
             if (string.IsNullOrEmpty(dataStr)) return;
@@ -766,8 +667,13 @@ namespace DynamicForms.Designer
                 {
                     var el = CreateElementByType(type);
                     
-                    // Elemanları yeniden sıralayalım
+                    if (!_formManager.CurrentFormElements.Contains(el))
+                    {
+                        _formManager.CurrentFormElements.Add(el);
+                    }
+
                     var currentList = _formManager.CurrentFormElements.OrderBy(x => x.OrderIndex).ToList();
+                    currentList.Remove(el);
                     currentList.Insert(Math.Min(targetIndex, currentList.Count), el);
                     
                     for (int i = 0; i < currentList.Count; i++)
@@ -775,13 +681,7 @@ namespace DynamicForms.Designer
                         currentList[i].OrderIndex = i;
                     }
 
-                    if (!_formManager.CurrentFormElements.Contains(el))
-                    {
-                        _formManager.AddElement(el);
-                    }
-
                     _selectedElement = el;
-                    UpdatePropertiesPanel();
                     RefreshDesigner();
                 }
             }
@@ -806,7 +706,6 @@ namespace DynamicForms.Designer
                         }
 
                         _selectedElement = draggingEl;
-                        UpdatePropertiesPanel();
                         RefreshDesigner();
                     }
                 }

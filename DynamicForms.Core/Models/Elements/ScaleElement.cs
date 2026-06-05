@@ -17,13 +17,42 @@ namespace DynamicForms.Core.Models.Elements
             Title = "Ölçek Sorusu";
         }
 
-        public override Control RenderControl(bool isDesignerMode)
+        public override Control RenderControl(bool isDesignerMode, bool isSelected = false, System.Action? onUpdate = null, System.Action? onDelete = null)
         {
             var panel = new Panel();
-            int yPos = AddTitleAndDescription(panel);
+            int yPos = AddTitleAndDescription(panel, isSelected, onUpdate);
+
+            if (isSelected)
+            {
+                var lblMin = new Label { Text = "Min:", AutoSize = true, Location = new Point(0, yPos + 2) };
+                var nMin = new NumericUpDown { Minimum = 0, Maximum = 1, Value = MinValue, Width = 50, Location = new Point(35, yPos) };
+                nMin.ValueChanged += (_, _) => { MinValue = (int)nMin.Value; onUpdate?.Invoke(); };
+
+                var lblMax = new Label { Text = "Max:", AutoSize = true, Location = new Point(100, yPos + 2) };
+                var nMax = new NumericUpDown { Minimum = 2, Maximum = 10, Value = MaxValue, Width = 50, Location = new Point(140, yPos) };
+                nMax.ValueChanged += (_, _) => { MaxValue = (int)nMax.Value; onUpdate?.Invoke(); };
+
+                panel.Controls.Add(lblMin);
+                panel.Controls.Add(nMin);
+                panel.Controls.Add(lblMax);
+                panel.Controls.Add(nMax);
+                yPos += 40;
+            }
 
             int count = (MaxValue - MinValue) + 1;
-            int xPos = 0;
+            int tlpWidth = 500;
+            var tlp = new TableLayoutPanel
+            {
+                Height = 45,
+                Width = tlpWidth,
+                RowCount = 1,
+                ColumnCount = count
+            };
+            for (int i = 0; i < count; i++)
+            {
+                tlp.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / count));
+            }
+
             for (int i = MinValue; i <= MaxValue; i++)
             {
                 var rb = new RadioButton
@@ -33,14 +62,24 @@ namespace DynamicForms.Core.Models.Elements
                     FlatStyle = FlatStyle.Flat,
                     Name = Id,
                     Enabled = !isDesignerMode,
-                    Location = new Point(xPos, yPos)
+                    CheckAlign = ContentAlignment.TopCenter,
+                    TextAlign = ContentAlignment.BottomCenter,
+                    Anchor = AnchorStyles.None,
+                    Margin = new Padding(0)
                 };
-                panel.Controls.Add(rb);
-                xPos += 55;
+                tlp.Controls.Add(rb, i - MinValue, 0);
             }
-            yPos += 30;
+            
+            panel.Size = new Size(600, yPos + 60);
+            tlp.Location = new Point(System.Math.Max(0, (panel.Width - tlpWidth) / 2), yPos);
+            tlp.Anchor = AnchorStyles.Top;
+            
+            panel.Controls.Add(tlp);
+            yPos += 50;
 
-            panel.Size = new Size(400, yPos);
+            yPos = AddFooterControls(panel, yPos, isSelected, onUpdate, onDelete);
+
+            panel.Size = new Size(600, yPos);
             return WrapInCard(panel, isDesignerMode);
         }
 

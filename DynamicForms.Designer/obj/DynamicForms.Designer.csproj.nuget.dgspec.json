@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Eren\\Desktop\\dynamic-forms-main\\DynamicForms.Designer\\DynamicForms.Designer.csproj": {}
+    "C:\\Users\\USER\\OneDrive\\Masaüstü\\çalışmalarım\\projects\\dynamic-forms\\DynamicForms.Designer\\DynamicForms.Designer.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Eren\\Desktop\\dynamic-forms-main\\DynamicForms.Core\\DynamicForms.Core.csproj": {
+    "C:\\Users\\USER\\OneDrive\\Masaüstü\\çalışmalarım\\projects\\dynamic-forms\\DynamicForms.Core\\DynamicForms.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Eren\\Desktop\\dynamic-forms-main\\DynamicForms.Core\\DynamicForms.Core.csproj",
+        "projectUniqueName": "C:\\Users\\USER\\OneDrive\\Masaüstü\\çalışmalarım\\projects\\dynamic-forms\\DynamicForms.Core\\DynamicForms.Core.csproj",
         "projectName": "DynamicForms.Core",
-        "projectPath": "C:\\Users\\Eren\\Desktop\\dynamic-forms-main\\DynamicForms.Core\\DynamicForms.Core.csproj",
-        "packagesPath": "C:\\Users\\Eren\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Eren\\Desktop\\dynamic-forms-main\\DynamicForms.Core\\obj\\",
+        "projectPath": "C:\\Users\\USER\\OneDrive\\Masaüstü\\çalışmalarım\\projects\\dynamic-forms\\DynamicForms.Core\\DynamicForms.Core.csproj",
+        "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\USER\\OneDrive\\Masaüstü\\çalışmalarım\\projects\\dynamic-forms\\DynamicForms.Core\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Eren\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -42,9 +38,9 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "all"
+          "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0-windows7.0": {
@@ -74,30 +70,21 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
-        }
-      },
-      "runtimes": {
-        "win-x64": {
-          "#import": []
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\Eren\\Desktop\\dynamic-forms-main\\DynamicForms.Designer\\DynamicForms.Designer.csproj": {
+    "C:\\Users\\USER\\OneDrive\\Masaüstü\\çalışmalarım\\projects\\dynamic-forms\\DynamicForms.Designer\\DynamicForms.Designer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Eren\\Desktop\\dynamic-forms-main\\DynamicForms.Designer\\DynamicForms.Designer.csproj",
+        "projectUniqueName": "C:\\Users\\USER\\OneDrive\\Masaüstü\\çalışmalarım\\projects\\dynamic-forms\\DynamicForms.Designer\\DynamicForms.Designer.csproj",
         "projectName": "DynamicForms.Designer",
-        "projectPath": "C:\\Users\\Eren\\Desktop\\dynamic-forms-main\\DynamicForms.Designer\\DynamicForms.Designer.csproj",
-        "packagesPath": "C:\\Users\\Eren\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Eren\\Desktop\\dynamic-forms-main\\DynamicForms.Designer\\obj\\",
+        "projectPath": "C:\\Users\\USER\\OneDrive\\Masaüstü\\çalışmalarım\\projects\\dynamic-forms\\DynamicForms.Designer\\DynamicForms.Designer.csproj",
+        "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\USER\\OneDrive\\Masaüstü\\çalışmalarım\\projects\\dynamic-forms\\DynamicForms.Designer\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Eren\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -111,8 +98,8 @@
           "net9.0-windows7.0": {
             "targetAlias": "net9.0-windows",
             "projectReferences": {
-              "C:\\Users\\Eren\\Desktop\\dynamic-forms-main\\DynamicForms.Core\\DynamicForms.Core.csproj": {
-                "projectPath": "C:\\Users\\Eren\\Desktop\\dynamic-forms-main\\DynamicForms.Core\\DynamicForms.Core.csproj"
+              "C:\\Users\\USER\\OneDrive\\Masaüstü\\çalışmalarım\\projects\\dynamic-forms\\DynamicForms.Core\\DynamicForms.Core.csproj": {
+                "projectPath": "C:\\Users\\USER\\OneDrive\\Masaüstü\\çalışmalarım\\projects\\dynamic-forms\\DynamicForms.Core\\DynamicForms.Core.csproj"
               }
             }
           }
@@ -125,9 +112,9 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "all"
+          "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0-windows7.0": {
@@ -151,12 +138,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
-        }
-      },
-      "runtimes": {
-        "win-x64": {
-          "#import": []
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

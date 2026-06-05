@@ -15,10 +15,25 @@ namespace DynamicForms.Core.Models.Elements
             Title = "Açık Uçlu Soru";
         }
 
-        public override Control RenderControl(bool isDesignerMode)
+        public override Control RenderControl(bool isDesignerMode, bool isSelected = false, System.Action? onUpdate = null, System.Action? onDelete = null)
         {
             var panel = new Panel();
-            int yPos = AddTitleAndDescription(panel);
+            int yPos = AddTitleAndDescription(panel, isSelected, onUpdate);
+
+            if (isSelected)
+            {
+                var cbSubType = new ComboBox
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Width = 250,
+                    Location = new Point(0, yPos)
+                };
+                cbSubType.Items.AddRange(System.Enum.GetNames(typeof(OpenEndedType)));
+                cbSubType.SelectedItem = SubType.ToString();
+                cbSubType.SelectedIndexChanged += (_, _) => { SubType = System.Enum.Parse<OpenEndedType>(cbSubType.SelectedItem?.ToString() ?? "ShortAnswer"); onUpdate?.Invoke(); };
+                panel.Controls.Add(cbSubType);
+                yPos += 35;
+            }
 
             Control input;
             if (SubType == OpenEndedType.Paragraph)
@@ -30,7 +45,8 @@ namespace DynamicForms.Core.Models.Elements
                     Height = 80,
                     Location = new Point(0, yPos),
                     Enabled = !isDesignerMode,
-                    Name = Id
+                    Name = Id,
+                    PlaceholderText = isDesignerMode ? "Uzun yanıt metni" : ""
                 };
                 yPos += 85;
             }
@@ -42,11 +58,14 @@ namespace DynamicForms.Core.Models.Elements
                     Height = 23,
                     Location = new Point(0, yPos),
                     Enabled = !isDesignerMode,
-                    Name = Id
+                    Name = Id,
+                    PlaceholderText = isDesignerMode ? "Kısa yanıt metni" : ""
                 };
                 yPos += 28;
             }
             panel.Controls.Add(input);
+
+            yPos = AddFooterControls(panel, yPos, isSelected, onUpdate, onDelete);
 
             panel.Size = new Size(400, yPos);
             return WrapInCard(panel, isDesignerMode);

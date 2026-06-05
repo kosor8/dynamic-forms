@@ -37,7 +37,7 @@ namespace DynamicForms.Core.Models
             var g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
-            using (var bg = new SolidBrush(Color.White))
+            using (var bg = new SolidBrush(this.BackColor))
                 g.FillRectangle(bg, ClientRectangle);
 
             for (int i = 1; i <= 3; i++)
@@ -81,7 +81,7 @@ namespace DynamicForms.Core.Models
         public int OrderIndex { get; set; }
         public string? OptionsPayload { get; set; }
 
-        public abstract Control RenderControl(bool isDesignerMode);
+        public abstract Control RenderControl(bool isDesignerMode, bool isSelected = false, Action? onUpdate = null, Action? onDelete = null);
         public abstract object? GetValue(Control renderedControl);
 
         public Control WrapInCard(Control content, bool isDesignerMode)
@@ -98,8 +98,8 @@ namespace DynamicForms.Core.Models
                     ForeColor = Color.FromArgb(180, 180, 180),
                     BackColor = Color.Transparent,
                     TextAlign = ContentAlignment.MiddleCenter,
-                    Location = new Point(0, 2),
-                    Size = new Size(800, 22),
+                    Dock = DockStyle.Top,
+                    Height = 22,
                     Cursor = Cursors.SizeAll,
                     Name = "DragHandle"
                 };
@@ -107,41 +107,104 @@ namespace DynamicForms.Core.Models
                 topOffset = 28;
             }
 
+            card.Width = content.Width + 40;
             content.Location = new Point(20, topOffset);
+            content.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+
             card.Controls.Add(content);
             card.Height = topOffset + content.Height + 20;
 
             return card;
         }
 
-        protected int AddTitleAndDescription(Panel panel)
+        protected int AddTitleAndDescription(Panel panel, bool isSelected, Action? onUpdate)
         {
-            string titleText = IsRequired ? Title + " *" : Title;
-            var lblTitle = new Label
-            {
-                Text = titleText,
-                Font = new Font("Segoe UI", 10.5f, FontStyle.Bold),
-                ForeColor = Color.FromArgb(33, 33, 33),
-                AutoSize = true,
-                Location = new Point(0, 0)
+            int yPos = 0;
+            string typeName = Type switch {
+                ElementType.OpenEnded => "Açık Uçlu Soru",
+                ElementType.Choice => "Çoktan Seçmeli Soru",
+                ElementType.Scale => "Ölçek Sorusu",
+                ElementType.Grid => "Tablo Seçim Sorusu",
+                ElementType.Time => "Zaman Sorusu",
+                ElementType.FileUpload => "Dosya Yükleme",
+                _ => "Soru"
             };
-            panel.Controls.Add(lblTitle);
-            int yPos = 28;
 
-            if (!string.IsNullOrEmpty(Description))
+            if (isSelected)
             {
-                var lblDesc = new Label
+                var txtTitle = new TextBox
                 {
-                    Text = Description,
+                    Text = (Title == typeName || Title == "Yeni Soru") ? "" : Title,
+                    Font = new Font("Segoe UI", 12f, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(33, 33, 33),
+                    Location = new Point(0, yPos),
+                    Width = 500,
+                    BorderStyle = BorderStyle.None,
+                    PlaceholderText = typeName,
+                    BackColor = panel.BackColor
+                };
+                txtTitle.TextChanged += (_, _) => { Title = string.IsNullOrWhiteSpace(txtTitle.Text) ? typeName : txtTitle.Text; };
+                panel.Controls.Add(txtTitle);
+
+                var titleLine = new Panel { BackColor = Color.LightGray, Height = 1, Width = 500, Location = new Point(0, yPos + 26) };
+                panel.Controls.Add(titleLine);
+
+                yPos += 35;
+            }
+            else
+            {
+                string displayTitle = string.IsNullOrWhiteSpace(Title) || Title == "Yeni Soru" ? typeName : Title;
+                string titleText = IsRequired ? displayTitle + " *" : displayTitle;
+                var lblTitle = new Label
+                {
+                    Text = titleText,
+                    Font = new Font("Segoe UI", 10.5f, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(33, 33, 33),
                     AutoSize = true,
-                    ForeColor = Color.FromArgb(117, 117, 117),
-                    Font = new Font("Segoe UI", 8.5f),
                     Location = new Point(0, yPos)
                 };
-                panel.Controls.Add(lblDesc);
-                yPos += 22;
+                panel.Controls.Add(lblTitle);
+                yPos += 28;
             }
+
             return yPos + 5;
+        }
+
+        protected int AddFooterControls(Panel panel, int yPos, bool isSelected, Action? onUpdate, Action? onDelete, bool showRequired = true)
+        {
+            if (!isSelected) return yPos;
+
+            var line = new Panel { BackColor = Color.LightGray, Height = 1, Width = 600, Location = new Point(0, yPos + 10) };
+            panel.Controls.Add(line);
+            yPos += 20;
+
+            var btnDel = new Button
+            {
+                Text = "\U0001F5D1", // Çöp kutusu ikonu
+                Font = new Font("Segoe UI", 12),
+                FlatStyle = FlatStyle.Flat,
+                Size = new Size(40, 30),
+                Location = new Point(400, yPos),
+                Cursor = Cursors.Hand
+            };
+            btnDel.FlatAppearance.BorderSize = 0;
+            btnDel.Click += (_, _) => onDelete?.Invoke();
+            panel.Controls.Add(btnDel);
+
+            if (showRequired)
+            {
+                var chkReq = new CheckBox
+                {
+                    Text = "Gerekli",
+                    AutoSize = true,
+                    Checked = IsRequired,
+                    Location = new Point(470, yPos + 5)
+                };
+                chkReq.CheckedChanged += (_, _) => { IsRequired = chkReq.Checked; onUpdate?.Invoke(); };
+                panel.Controls.Add(chkReq);
+            }
+
+            return yPos + 40;
         }
     }
 }

@@ -11,10 +11,10 @@ namespace DynamicForms.Core.Models.Elements
             Title = "Dosya Yükleme";
         }
 
-        public override Control RenderControl(bool isDesignerMode)
+        public override Control RenderControl(bool isDesignerMode, bool isSelected = false, System.Action? onUpdate = null, System.Action? onDelete = null)
         {
             var panel = new Panel();
-            int yPos = AddTitleAndDescription(panel);
+            int yPos = AddTitleAndDescription(panel, isSelected, onUpdate);
 
             var txtPath = new TextBox
             {
@@ -45,6 +45,8 @@ namespace DynamicForms.Core.Models.Elements
             panel.Controls.Add(txtPath);
             panel.Controls.Add(btnUpload);
             yPos += 35;
+
+            yPos = AddFooterControls(panel, yPos, isSelected, onUpdate, onDelete);
 
             panel.Size = new Size(400, yPos);
             return WrapInCard(panel, isDesignerMode);

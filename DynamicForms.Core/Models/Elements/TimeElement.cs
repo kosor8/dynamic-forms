@@ -16,10 +16,25 @@ namespace DynamicForms.Core.Models.Elements
             Title = "Zaman Sorusu";
         }
 
-        public override Control RenderControl(bool isDesignerMode)
+        public override Control RenderControl(bool isDesignerMode, bool isSelected = false, System.Action? onUpdate = null, System.Action? onDelete = null)
         {
             var panel = new Panel();
-            int yPos = AddTitleAndDescription(panel);
+            int yPos = AddTitleAndDescription(panel, isSelected, onUpdate);
+
+            if (isSelected)
+            {
+                var cbSubType = new ComboBox
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Width = 250,
+                    Location = new Point(0, yPos)
+                };
+                cbSubType.Items.AddRange(System.Enum.GetNames(typeof(TimeType)));
+                cbSubType.SelectedItem = SubType.ToString();
+                cbSubType.SelectedIndexChanged += (_, _) => { SubType = System.Enum.Parse<TimeType>(cbSubType.SelectedItem?.ToString() ?? "Date"); onUpdate?.Invoke(); };
+                panel.Controls.Add(cbSubType);
+                yPos += 35;
+            }
 
             var dtp = new DateTimePicker
             {
@@ -39,6 +54,8 @@ namespace DynamicForms.Core.Models.Elements
 
             panel.Controls.Add(dtp);
             yPos += 30;
+
+            yPos = AddFooterControls(panel, yPos, isSelected, onUpdate, onDelete);
 
             panel.Size = new Size(400, yPos);
             return WrapInCard(panel, isDesignerMode);

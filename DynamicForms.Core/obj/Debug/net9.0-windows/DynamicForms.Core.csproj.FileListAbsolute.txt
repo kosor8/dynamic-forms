@@ -10,3 +10,16 @@ C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\obj\Debug\net9.0-wind
 C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\obj\Debug\net9.0-windows\refint\DynamicForms.Core.dll
 C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.pdb
 C:\Users\Eren\Desktop\dynamic-forms-main\DynamicForms.Core\obj\Debug\net9.0-windows\ref\DynamicForms.Core.dll
+C:\Users\USER\OneDrive\Masaüstü\çalışmalarım\projects\dynamic-forms\DynamicForms.Core\bin\Debug\net9.0-windows\DynamicForms.Core.deps.json
+C:\Users\USER\OneDrive\Masaüstü\çalışmalarım\projects\dynamic-forms\DynamicForms.Core\bin\Debug\net9.0-windows\DynamicForms.Core.dll
+C:\Users\USER\OneDrive\Masaüstü\çalışmalarım\projects\dynamic-forms\DynamicForms.Core\bin\Debug\net9.0-windows\DynamicForms.Core.pdb
+C:\Users\USER\OneDrive\Masaüstü\çalışmalarım\projects\dynamic-forms\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.csproj.AssemblyReference.cache
+C:\Users\USER\OneDrive\Masaüstü\çalışmalarım\projects\dynamic-forms\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\USER\OneDrive\Masaüstü\çalışmalarım\projects\dynamic-forms\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.AssemblyInfoInputs.cache
+C:\Users\USER\OneDrive\Masaüstü\çalışmalarım\projects\dynamic-forms\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.AssemblyInfo.cs
+C:\Users\USER\OneDrive\Masaüstü\çalışmalarım\projects\dynamic-forms\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.csproj.CoreCompileInputs.cache
+C:\Users\USER\OneDrive\Masaüstü\çalışmalarım\projects\dynamic-forms\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.sourcelink.json
+C:\Users\USER\OneDrive\Masaüstü\çalışmalarım\projects\dynamic-forms\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.dll
+C:\Users\USER\OneDrive\Masaüstü\çalışmalarım\projects\dynamic-forms\DynamicForms.Core\obj\Debug\net9.0-windows\refint\DynamicForms.Core.dll
+C:\Users\USER\OneDrive\Masaüstü\çalışmalarım\projects\dynamic-forms\DynamicForms.Core\obj\Debug\net9.0-windows\DynamicForms.Core.pdb
+C:\Users\USER\OneDrive\Masaüstü\çalışmalarım\projects\dynamic-forms\DynamicForms.Core\obj\Debug\net9.0-windows\ref\DynamicForms.Core.dll

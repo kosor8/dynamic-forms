@@ -11,6 +11,7 @@ namespace DynamicForms.Core.Managers
     {
         public List<FormElement> CurrentFormElements { get; private set; } = new List<FormElement>();
         public string FormTitle { get; set; } = "Yeni Form";
+        public string FormDescription { get; set; } = "";
 
         public void AddElement(FormElement element)
         {
@@ -60,6 +61,7 @@ namespace DynamicForms.Core.Managers
         {
             CurrentFormElements.Clear();
             FormTitle = "Yeni Form";
+            FormDescription = "";
         }
 
         public void ExportToJson(string filePath)
