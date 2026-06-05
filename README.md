@@ -14,8 +14,8 @@ Bu proje, teknik bilgisi olmayan kullanıcıların görsel bir arayüz (UI) üze
   - 🧮 **Seçme Tablosu:** Sürükle-bırak destekli çoktan seçmeli veya onay kutulu karmaşık ızgara (Grid) soruları.
   - 📅 **Zaman:** Tarih veya Saat seçici.
   - 📎 **Dosya Yükleme:** Cihazdan dosya dizini seçme işlemi.
-- **Dinamik Özellikler Paneli:**
-  Tasarım alanından bir soruya tıklandığında, sağ taraftaki panelde o soruya ait özellikler (Soru Tipi Değiştirme, Satır/Sütun veya Seçenek Ekleme/Silme, Zorunluluk durumu) anlık olarak yönetilebilir.
+- **Satır İçi (Inline) Düzenleme Deneyimi:**
+  Tasarım alanından bir soruya tıklandığında, sağ tarafta karmaşık bir özellik menüsü açılmaz. Tamamen Google Forms mimarisinde olduğu gibi, sorunun içeriğini, tipini, seçeneklerini, satır/sütun veya ölçek limitlerini doğrudan **sorunun kendi kartı üzerinden** anlık olarak düzenleyebilirsiniz.
 - **Tam Duyarlı (Responsive) "Kart" Görünümü:**
   Eklenen sorular standart bir genişliğe hapsolmaz, uygulama penceresinin boyutuna göre otomatik genişleyip daralan şık çerçeveli kartlar (bloklar) halinde görünür.
 - **Veritabanı ve Dışa Aktarma:**
@@ -45,14 +45,16 @@ dotnet run
 
 ## 💡 Nasıl Kullanılır?
 
-1. **Form Başlığı:** Sol üst kısımdan formunuzun ana başlığını belirleyin.
-2. **Soru Ekleme:** Sol paneldeki araç kutusundan bir soru butonuna fareyle **basılı tutarak** orta boş alana sürükleyin.
-3. **Soruyu Düzenleme:** Ortadaki sorunun üzerine tıklayın. Sağ panelde o sorunun ayarları belirecektir.
-   - *Seçmeli Soru* eklediyseniz, sağ panelden "Seçenek 2", "Seçenek 3" ekleyebilir ve tiplerini Onay Kutusu olarak değiştirebilirsiniz.
-   - *Seçme Tablosu* eklediyseniz, sağ panelden tablonun Satır (Row) ve Sütun (Column) değerlerini artırıp silebilirsiniz.
-4. **Kaydetme:** "Formu Veritabanına Kaydet" butonu ile form yapınızı güvenceye alın.
-5. **Doldurma:** Üst menüden **Önizleme** sekmesine geçin, formunuzu doldurup gönderin.
-6. **Sonuçlar:** **Yanıtlar** sekmesine geçerek açılır menüden formunuzu seçip toplanan verileri anında tabloda görüntüleyin.
+1. **Form Başlığı:** Tasarım ekranının en üstünde yer alan varsayılan Form Başlığı ve Açıklaması kartına tıklayarak form detaylarınızı girin.
+2. **Soru Ekleme:** Sol paneldeki araç kutusundan bir soru butonuna fareyle **basılı tutarak** orta boş alana sürükleyip bırakın (sürüklerken mavi bir çizgi size yerini gösterecektir).
+3. **Soruyu Düzenleme:** Form üzerindeki herhangi bir soruya tıklayın. Soru anında düzenleme moduna geçer:
+   - Soru başlığını kendi TextBox'ından düzenleyin.
+   - *Seçmeli Sorularda* doğrudan şıkların yanındaki "X" tuşu ile silme yapabilir veya alttaki butondan "Yeni Seçenek Ekle" diyebilirsiniz.
+   - *Ölçek Sorusunda* 1-5 veya 0-10 gibi aralıkları açılır menüden ayarlayabilir, iki uca özel "Etiket" metinleri ekleyebilirsiniz.
+   - *Tablo Seçim Sorusunda* sol taraftan satırları, sağ taraftan sütunları ayrı ayrı yönetebilirsiniz.
+4. **Kaydetme:** Üst menüdeki "Kaydet" butonu ile form yapınızı veritabanına kaydedin.
+5. **JSON Dışa Aktarma:** Dilerseniz tasarımınızı "JSON İndir" butonuyla bilgisayarınıza yedekleyebilirsiniz.
+6. **Yanıtlar ve Filler:** `DynamicForms.Filler` modülünü çalıştırarak oluşturduğunuz formları gerçek kullanıcı gibi doldurabilir ve yanıtları veritabanında saklayabilirsiniz.
 
 ## 🏗️ Mimari ve Teknolojiler
 
